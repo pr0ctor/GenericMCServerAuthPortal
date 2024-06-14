@@ -1,0 +1,135 @@
+<?php $page_title = "Dashboard"; include($_SERVER["DOCUMENT_ROOT"]."/scripts/header.inc");
+
+    if(!isset($_SESSION["user"])) {
+        header("Location: index.html");
+        exit();
+    }
+?>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/navbar.inc");
+?>
+
+<?php
+
+    if(isset($_SESSION["isBanned"]) && $_SESSION["isBanned"] == true) 
+    {
+
+        header("Location: index.html");
+        exit();
+
+    }
+    // else if(isset($_SESSION["isMinecraftMember"]) && $_SESSION["isMinecraftMember"] == true) 
+    else if(isset($_SESSION["isDiscordServerMember"]) && $_SESSION["isDiscordServerMember"] == true) 
+    {
+
+        $appStmt = $db->prepare("
+            select m.discord_name, mca.name, a.server_type, a.application_type, a.application_date
+            from applications as a
+            inner join members m on a.member = m.id
+            inner join mcaccounts mca on m.mcaccount = mca.id
+            where m.discord_id = ? 
+        ");
+
+        $appStmt->bind_param("s", $_SESSION["user"]["userData"]["id"]);
+        $appStmt->execute();
+
+        $applications = $appStmt->get_result();
+
+        $dataSet = array();
+        while($a = $applications->fetch_assoc()) {
+            //print_r($a);
+            $dataSet[] = array(
+                $a["discord_name"],
+                $a["name"],
+                $a["server_type"],
+                $a["application_type"],
+                $a["application_date"],
+            );
+        }
+
+
+        $appStmt->close();
+?>
+<script>
+    $(document).ready(function(){
+        const dataSet = <?php echo json_encode($dataSet); ?>;
+
+        $("#appTable").DataTable({
+            columns: [
+                { title: "Discord Name" },
+                { title: "Minecraft Name" },
+                { title: "Server(s)" },
+                { title: "Status" },
+                { title: "Application Date" },
+            ],
+            data: dataSet
+        });
+    });
+</script>
+<div>
+    <div align="center">
+        <h1>My Applications</h1>
+        <div>
+            <p>
+                <form action="/apply.html" method="post">
+                    <table>
+                        <caption class="table-caption">Submit Application</caption>
+                        <tr>
+                            <th>Minecraft Name</th><th>Server(s)</th><th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" id="mcname" name="mcname">
+                            </td>
+                            <td>
+                                <select class="form-select form-control form-control-sm" id="servertype" name="servertype">
+                                    <option value="Vanilla">Vanilla</option>
+                                    <option value="Modded">Modded</option>
+                                    <option value="Both">Both</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="submit" value="Submit" class="form-control form-control-sm btn btn-primary">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </p>
+        </div>
+        <?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/notification-area.inc"); ?>
+        <div class="datatableTable"> 
+            <table class="display" id="appTable">
+                <thead>
+                    <th>Discord Name</th><th>Minecraft Name</th><th>Server(s)</th><th>Application Status</th><th>Application Date</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php
+
+    }
+    else
+    {
+
+?>
+
+<div>
+    <div>
+        <p>
+            Hey there! Interested in some Minecraft with Us?
+
+            Reach out to the <strong>@&lt;moderator_role&gt;</strong>s on our <a href="<server_link>">Discord</a> to join us!
+        </p>
+    </div>
+</div>
+
+<?php
+
+    }
+
+?>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/footer.inc");
+?>

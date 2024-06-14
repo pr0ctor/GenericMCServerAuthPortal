@@ -1,0 +1,95 @@
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/authenticate.inc");
+?>
+<?php $page_title = "Applications"; include($_SERVER["DOCUMENT_ROOT"]."/scripts/header.inc");
+?>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/navbar.inc");
+?>
+
+<?php 
+    $operationType = "approve-application";
+    $sourceDataTableId = "pendingApplicationsTable";
+    include($_SERVER["DOCUMENT_ROOT"]."/scripts/table-click-html.inc");
+?>
+
+<?php
+    $applicationsQuery = $db->query("
+        select a.id, m.discord_name, mca.name, mca.uuid, a.server_type, a.application_type, a.application_date
+        from applications a
+        inner join members m on a.member = m.id
+        inner join mcaccounts mca on mca.id = m.mcaccount
+    ");
+    $items = array();
+    while($i = $applicationsQuery->fetch_array(MYSQLI_NUM)) $items[] = $i;
+?>
+<script>
+    $(document).ready(function(){
+        const dataSet = <?php echo json_encode($items); ?>;
+
+        const pendingApplications = dataSet.filter((a) => a.includes("Pending"));
+        const approvedApplications = dataSet.filter((a) => a.includes("Approved"));
+        const deniedApplications = dataSet.filter((a) => a.includes("Denied"));
+
+        const columns = [
+                { title: "Id" },
+                { title: "Discord Name" },
+                { title: "Minecraft Name" },
+                { title: "Minecraft UUID" },
+                { title: "Server(s)" },
+                { title: "Application Status" },
+                { title: "Application Date" },
+            ];
+
+        $("#pendingApplicationsTable").DataTable({
+            columns: columns,
+            data: pendingApplications
+        });
+
+        $("#approvedApplicationsTable").DataTable({
+            columns: columns,
+            data: approvedApplications
+        });
+
+        $("#deniedApplicationsTable").DataTable({
+            columns: columns,
+            data: deniedApplications
+        });
+    });
+</script>
+
+<div align="center">
+
+    <div><h1>Pending Applications</h1></div>
+    <div>
+        <div class="datatableTable"> 
+            <table class="display" id="pendingApplicationsTable">
+                <thead>
+                    <th>Id</th><th>Discord Name</th><th>Minecraft Name</th><th>Minecraft UUID</th><th>Server(s)</th><th>Application Status</th><th>Application Date</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div><h1>Approved Applications</h1></div>
+    <div>
+        <div class="datatableTable"> 
+            <table class="display" id="approvedApplicationsTable">
+                <thead>
+                    <th>Id</th><th>Discord Name</th><th>Minecraft Name</th><th>Minecraft UUID</th><th>Server(s)</th><th>Application Status</th><th>Application Date</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div><h1>Denied Applications</h1></div>
+    <div>
+        <div class="datatableTable"> 
+            <table class="display" id="deniedApplicationsTable">
+                <thead>
+                    <th>Id</th><th>Discord Name</th><th>Minecraft Name</th><th>Minecraft UUID</th><th>Server(s)</th><th>Application Status</th><th>Application Date</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/footer.inc");
+?>

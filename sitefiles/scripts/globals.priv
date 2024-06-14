@@ -1,0 +1,37 @@
+<?php
+
+    // Discord Role Information
+
+    // Role to determine who has access to the server
+    $mc_member_role_id = "12345678901234567890";
+    // Role to determine who has mod () access
+    $mc_mod_role_id = "12345678901234567890";
+    // Role to determine who has admin access
+    $mc_admin_role_id = "12345678901234567890";
+    // Role to determine who has access to the discord server
+    $discord_server_member_role_id = "12345678901234567890";
+    // Identifier of the destination server to connect to in order to check if the user is actually in the discord server
+    $discord_server_id = "12345678901234567890";
+
+    // RCON (Remote Connection) Information
+
+    // IP of the minecraft server (assumes both servers are on the same IP)
+    $rcon_server_ip = "127.0.0.1";
+    // Port configured in the "server.properties" for the specified server
+    $vanilla_server_rcon_port = 25555;
+    // Port configured in the "server.properties" for the specified server
+    $modded_server_rcon_port = 25556;
+    // Password configured in the "server.properties" for the specified server (assumes password is the same for both serverss)
+    $rcon_port_password = "password";
+
+    // Other Discord Information
+
+    // Name to appear when the embeds are pushed to the channel in the Discord server
+    $webhook_username = "Some Embed UserName";
+
+    // Webhook URI for the channel to post to
+    $onboarding_webhook_url = "https://discord.com/api/webhooks/1134999153974444122/6dSobN-vA1Y1aHfwkqGPXmfBBV1jhnrTWVCVz6Rywcn8RdAqM19FNptxt-JbFxnzycD9";
+
+    // Static list of the types of servers in the database
+    $minecraft_server_types = array("Vanilla", "Modded");
+?>

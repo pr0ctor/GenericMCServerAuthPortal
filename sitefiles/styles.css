@@ -1,0 +1,157 @@
+/* Bootstrap Overrides */
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+
+body {
+    /*background-color: #2a2a2a;*/
+    background-color: #999999;
+}
+
+.table-caption {
+    caption-side:top;
+    text-align: center;
+    font-size: large;
+    color: black;
+}
+
+.datatableTable {
+    width: 85%;
+    background-color: white;
+    border-radius: 15px;
+    padding: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    overflow: auto;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #000000;
+}
+
+.discord-login-link {
+    display: inline-block;
+    font-family: Whitney, "Open Sans", Helvetica, sans-serif;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
+    background-color: #7289da;
+    border: 2px solid #7289da;
+    color: #fff;
+}
+
+/* Revert Bootstrap override for Discord login button */
+
+.discord-login-link:hover {
+    text-decoration: none;
+}
+
+
+.side-panel { 
+    position: absolute; 
+    display: none; 
+    background-color: #2a2a2a;
+    color: white;
+    padding: 5px;
+    z-index: 10;
+    border-radius: 25px;
+}
+
+.side-panel div {
+    padding-bottom: 5px;
+}
+
+.side-panel .form-check-input {
+    padding-right: 5px;
+}
+
+#selected-table-row {
+    background-color: #ffff89;
+}
+
+.notification-div {
+    width:50%;
+}
+
+header {
+    position: relative;
+    height: 40vh;
+    /* min-height: 25rem; */
+    width: 100%;
+    overflow: hidden;
+}
+
+header video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.overlay-header-logo {
+    display: block;
+    width: 50%;
+    height: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3%;
+    filter: drop-shadow(2px 2px 2px #000000);
+}
+
+.drop-shadow {
+    text-shadow: 2px 2px #000000;
+}
+
+#navbar-logo {
+    filter: drop-shadow(1px 1px 1px #a6a6a6);
+}
+
+#header-text {
+    text-shadow: 2px 2px #000000;
+}
+
+#description-pane {
+    width: 50%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 25px;
+    border-color: #000000;
+}
+
+#description-pane .nav-link.active {
+    background-color: #00becc;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
+#description-pane-content {
+    /* margin-left: auto;
+    margin-right: auto; */
+    justify-content: center;
+}
+
+#navbar-brand-link {
+    text-decoration: none;
+    color: #000000;
+}
+
+#navbar-brand-link:hover {
+    text-decoration: underline;
+}

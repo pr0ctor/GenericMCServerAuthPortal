@@ -1,0 +1,121 @@
+<?php
+require_once($_SERVER["DOCUMENT_ROOT"]."/scripts/db.inc");
+require_once($_SERVER["DOCUMENT_ROOT"]."/scripts/client-info.priv");
+require_once($_SERVER["DOCUMENT_ROOT"]."/scripts/globals.priv");
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
+if(!isset($_GET['code'])){
+    echo 'no code';
+    header("Location: index.html");
+    exit();
+}
+
+$discord_code = $_GET['code'];
+
+// print_r($discord_code);
+// print_r($clientid);
+
+$payload = [
+    'code'=>$discord_code,
+    'client_id'=>$clientid,
+    'client_secret'=>$clientsecret,
+    'grant_type'=>'authorization_code',
+    'redirect_uri'=>$redirect_uri,
+    'scope'=>$scope,
+];
+
+//print_r($payload);
+
+$payload_string = http_build_query($payload);
+$discord_token_url = "https://discord.com/api/oauth2/token";
+
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL, $discord_token_url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $payload_string);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+$result = curl_exec($ch);
+
+if(!$result){
+    echo curl_error($ch);
+}
+
+$result = json_decode($result,true);
+$access_token = $result['access_token'];
+
+//print_r($result);
+
+$discord_users_url = "https://discordapp.com/api/users/@me/guilds/$discord_server_id/member";
+$header = array("Authorization: Bearer $access_token", "Content-Type: application/x-www-form-urlencoded");
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+curl_setopt($ch, CURLOPT_URL, $discord_users_url);
+curl_setopt($ch, CURLOPT_POST, false);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+$result = curl_exec($ch);
+
+$result = json_decode($result, true);
+
+//print_r($result);
+
+session_start();
+
+$_SESSION['logged_in'] = true;
+
+if(in_array($mc_admin_role_id, $result['roles']) || in_array($mc_mod_role_id, $result['roles'])) {
+    $_SESSION['isAdmin'] = true;
+}
+
+if(in_array($mc_member_role_id, $result['roles'])) {
+    $_SESSION['isMinecraftMember'] = true;
+}
+
+if(in_array($discord_server_member_role_id, $result['roles'])) {
+    $_SESSION['isDiscordServerMember'] = true;
+}
+
+$_SESSION['user'] = [
+    'userData'=>$result['user'],
+    'nickname'=>$result['nick'],
+    'avatar'=>$result['avatar'],
+    'roles'=>$result['roles']
+];
+
+
+$checkBannedStatus = $db->prepare("
+    select count(b.id) as bancount
+    from bans b
+    inner join members m on b.member = m.id
+    where m.discord_id = ?
+");
+$checkBannedStatus->bind_param("s", $_SESSION['user']["userData"]["id"]);
+$checkBannedStatus->execute();
+$bans = $checkBannedStatus->get_result();
+
+$b = $bans->fetch_assoc();
+
+if($b["bancount"] > 0) {
+    $_SESSION["isBanned"] = true;
+}
+
+
+//print_r($_SESSION);
+
+header("location: dashboard.html");
+exit();
+
+?>

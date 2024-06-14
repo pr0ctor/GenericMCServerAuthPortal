@@ -1,0 +1,124 @@
+<?php   session_start();
+
+    // ini_set('display_errors', 1);
+    // ini_set('display_startup_errors', 1);
+    // error_reporting(E_ALL);
+
+    // print_r($_SESSION);
+
+    if(!isset($_SESSION["user"])) {
+        header("Location: index.html");
+    }
+
+    if(isset($_SESSION["isBanned"]) && $_SESSION["isBanned"] == true) {
+        header("Location: dashboard.html");
+        exit();
+    }
+
+    if(!empty($_POST["mcname"]) && !empty($_POST["servertype"])) {
+        require_once($_SERVER["DOCUMENT_ROOT"]."/scripts/db.inc");
+        include($_SERVER["DOCUMENT_ROOT"]."/scripts/get-mc-account.inc");
+        include($_SERVER["DOCUMENT_ROOT"]."/scripts/sanitize.inc");
+
+        $validServerTypes = array("Modded", "Vanilla", "Both");
+        
+        $parsedMCName = sanitizeInput($_POST["mcname"]);
+        $parsedServerType = sanitizeInput($_POST["servertype"]);
+
+        $mc_info = username_to_profile($parsedMCName);
+
+        if($mc_info == false || isset($mc_info["errorMessage"])) {
+            $_SESSION["error"] = array("type"=>"MCAccountAuthError", "message"=>"Minecraft Account not found. Please make sure that you are using a valid Minecraft Account Name.");
+            header("Location: dashboard.html");
+            exit();
+        }
+
+
+        $mc_info["id"] = normalizeUuid($mc_info["id"]);
+
+        // print_r($mc_info);
+
+        // { name: "", id: "" }
+
+        //check if minecraft account already exists
+
+        $checkMCAccount = $db->prepare("select count(id) as mcaCount, id from mcaccounts where uuid = ? limit 1");
+        $checkMCAccount->bind_param("s", $mc_info["id"]);
+        $checkMCAccount->execute();
+        $mcaccount = $checkMCAccount->get_result();
+
+        $mca = $mcaccount->fetch_assoc();
+
+        $mcaccount_id = 0;
+
+        // if not, create one
+
+        if($mca["mcaCount"] < 1) {
+
+            $insertMCMember = $db->prepare("insert into mcaccounts(name, uuid) values( ? , ? )");
+            $insertMCMember->bind_param("ss", $mc_info["name"], $mc_info["id"]);
+            $insertMCMember->execute();
+
+            $mcaccount_id = $insertMCMember->insert_id;
+
+            $insertMCMember->close();
+        }
+
+        // else, use the id
+        else {
+            $mcaccount_id = $mca["id"];
+        }
+
+        $checkMCAccount->close();
+
+        // print_r($mcaccount_id);
+
+        //check if discord account already exists
+
+        $checkMember = $db->prepare("
+            select count(id) as mCount, id 
+            from members 
+            where mcaccount = ? and discord_id = ?
+            limit 1"
+        );
+        $checkMember->bind_param("is", $mcaccount_id, $_SESSION["user"]["userData"]["id"]);
+        $checkMember->execute();
+        $member = $checkMember->get_result();
+
+        $mem = $member->fetch_assoc();
+
+        $member_id = 0;
+
+        // if not, create one
+
+        if($count < 1) {
+
+            $insertMember = $db->prepare("insert into members(discord_id, discord_name, mcaccount) values( ? , ? , ? )");
+            $insertMember->bind_param("ssi", $_SESSION["user"]["userData"]["id"], $_SESSION["user"]["userData"]["username"], $mcaccount_id);
+            $insertMember->execute();
+    
+            $member_id = $insertMember->insert_id;
+    
+            $insertMember->close();
+        }
+        // else, use the id
+        else {
+            $member_id = $mem["id"];
+        }
+
+        $checkMember->close();
+
+        $pending = "Pending";
+
+        $insertApplication = $db->prepare("insert into applications(member, server_type, application_type) values( ? , ? , ? )");
+        $insertApplication->bind_param("iss", $member_id, $parsedServerType , $pending);
+        $insertApplication->execute();
+
+        $insertApplication->close();
+
+        $_SESSION["success"] = array("message"=>"Application successfully created.");
+    }
+
+    header("Location: ../dashboard.html");
+    exit();
+?>

@@ -1,0 +1,56 @@
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/authenticate.inc");
+?>
+<?php $page_title = "Member List"; include($_SERVER["DOCUMENT_ROOT"]."/scripts/header.inc");
+?>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/navbar.inc");
+?>
+
+<?php 
+    $operationType = "ban-member";
+    $sourceDataTableId = "memberlistTable";
+    include($_SERVER["DOCUMENT_ROOT"]."/scripts/table-click-html.inc");
+
+?>
+
+<?php
+    $memberQuery = $db->query("
+        select m.id, m.discord_name, mca.name, mca.uuid
+        from members m
+        inner join mcaccounts mca on mca.id = m.mcaccount
+    ");
+    $items = array();
+    while($i = $memberQuery->fetch_array(MYSQLI_NUM)) $items[] = $i;
+?>
+<script>
+    $(document).ready(function(){
+        const dataSet = <?php echo json_encode($items); ?>;
+
+        $("#memberlistTable").DataTable({
+            columns: [
+                { title: "Id" },
+                { title: "Discord Name" },
+                { title: "Minecraft Name" },
+                { title: "Minecraft UUID" },
+            ],
+            data: dataSet
+        });
+    });
+</script>
+
+<div align="center">
+
+    <div><h1>Members</h1></div>
+    <div>
+        <div class="datatableTable"> 
+            <table class="display" id="memberlistTable">
+                <thead>
+                    <th>Id</th><th>Discord Name</th><th>Minecraft Name</th><th>Minecraft UUID</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/footer.inc");
+?>

@@ -1,0 +1,24 @@
+<?php
+
+    require_once($_SERVER["DOCUMENT_ROOT"]."/scripts/authenticate.inc");
+
+    if(!isset($_POST["operation"])) {
+        header("Location: index.html");
+    }
+
+    if(empty($_POST["operation"])) {
+        header("Location: index.html");
+    }
+
+    if($_POST["operation"] == "approve-application") {
+        include($_SERVER["DOCUMENT_ROOT"]."/scripts/approve-application.inc");
+    }
+
+    if($_POST["operation"] == "ban-member") {
+        include($_SERVER["DOCUMENT_ROOT"]."/scripts/ban-member.inc");
+    }
+
+
+    header("Location: index.html");
+    exit();
+?>

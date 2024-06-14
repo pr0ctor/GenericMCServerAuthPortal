@@ -1,0 +1,49 @@
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/authenticate.inc");
+?>
+<?php $page_title = "Whitelist"; include($_SERVER["DOCUMENT_ROOT"]."/scripts/header.inc");
+?>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/navbar.inc");
+?>
+
+<?php
+    $whitelistQuery = $db->query("
+        select w.id, m.discord_name, mca.name, mca.uuid, w.server_type
+        from whitelist w
+        inner join members m on m.id = w.member
+        inner join mcaccounts mca on mca.id = w.mcaccount
+    ");
+    $items = array();
+    while($i = $whitelistQuery->fetch_array(MYSQLI_NUM)) $items[] = $i;
+?>
+<script>
+    $(document).ready(function(){
+        const dataSet = <?php echo json_encode($items); ?>;
+
+        $("#whitelistTable").DataTable({
+            columns: [
+                { title: "Id" },
+                { title: "Discord Name" },
+                { title: "Minecraft Name" },
+                { title: "Minecraft UUID" },
+                { title: "Server" },
+            ],
+            data: dataSet
+        });
+    });
+</script>
+
+<div align="center">
+
+    <div><h1>Whitelist</h1></div>
+    <div>
+        <div class="datatableTable"> 
+            <table class="display" id="whitelistTable" width="100%">
+                <th>Id</th><th>Discord Name</th><th>Minecraft Name</th><th>Minecraft UUID</th><th>Server</th>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/footer.inc");
+?>

@@ -1,0 +1,75 @@
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/authenticate.inc");
+?>
+<?php $page_title = "Approvals"; include($_SERVER["DOCUMENT_ROOT"]."/scripts/header.inc");
+?>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/navbar.inc");
+?>
+
+<?php
+    // $whitelistQuery = $db->query("
+    // select a.id, m.discord_name, mca.name, mca.uuid, app.server_type, app.application_date, a.approval_date
+    // from approvals a
+    // inner join applications app on a.application_id = app.id
+    // inner join members m on m.id = a.member
+    // inner join mcaccounts mca on mca.id = m.mcaccount
+    // ");
+
+    // $approvalQuery = $db->query("
+    // select a1.id, m1.discord_name as applicant, mca.name, mca.uuid, app1.server_type, app1.application_date, a1.approval_date
+    // from approvals a1
+    // inner join applications app on a1.application_id = app1.id
+    // inner join members m1 on m1.id = app1.member
+    // inner join mcaccounts mca on mca.id = m1.mcaccount
+    // union
+    // select m2.discord_name as approver
+    // from approvals a2
+    // inner join members m2 on m2.id = a2.member
+    // ");
+
+    $approvalQuery = $db->query("
+        select a.id, m1.discord_name as applicant, mca.name, mca.uuid, app.server_type, app.application_date, m2.discord_name as approver, a.approval_date
+        from approvals a
+        inner join applications app on app.id = a.application_id
+        inner join members m1 on m1.id = app.member
+        inner join mcaccounts mca on mca.id = m1.mcaccount
+        inner join members m2 on m2.id = a.approver
+    ");
+
+    $items = array();
+    while($i = $approvalQuery->fetch_array(MYSQLI_NUM)) $items[] = $i;
+?>
+<script>
+    $(document).ready(function(){
+        const dataSet = <?php echo json_encode($items); ?>;
+
+        $("#approvalTable").DataTable({
+            columns: [
+                { title: "Id" },
+                { title: "Applicant Discord Name" },
+                { title: "Minecraft Name" },
+                { title: "Minecraft UUID" },
+                { title: "Server(s)" },
+                { title: "Application Date" },
+                { title: "Approver Discord Name" },
+                { title: "Approval Date" },
+            ],
+            data: dataSet
+        });
+    });
+</script>
+
+<div align="center">
+
+    <div><h1>Approvals</h1></div>
+    <div>
+        <div class="datatableTable"> 
+            <table class="display" id="approvalTable" width="100%">
+                <th>Id</th><th>Applicant Discord Name</th><th>Minecraft Name</th><th>Minecraft UUID</th><th>Server(s)</th><th>Application Date</th><th>Approver Discord Name</th><th>Approval Date</th>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/footer.inc");
+?>

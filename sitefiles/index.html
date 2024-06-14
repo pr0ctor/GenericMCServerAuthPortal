@@ -1,0 +1,69 @@
+<?php $page_title = "Home"; include($_SERVER["DOCUMENT_ROOT"]."/scripts/header.inc");
+?>
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/navbar.inc");
+?>
+<!-- Sample Index page -->
+<header>
+    <div>
+        <img src="<?php echo (rand(0, 1) == 1) ? "../images/generic-minecraft-server-logo.png" : "../images/generic-minecraft-server-logo-2.png" ?>" class="overlay-header-logo" align="center">
+        <h1 class="text-white text-center" id="header-text">Official Minecraft Server</h1>
+    </div>
+    <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop" id="video-background" class="position-absolute end-0 bottom-0 h-auto w-auto">
+        <source src="media/minecraftpan.webm" type="video/webm"> Your browser is old
+        
+    </video>
+</header>
+
+<div>
+    <div align="center">
+        <h1 class="text-white text-center drop-shadow">Welcome</h1>
+    </div>
+    <div class="" id="description-pane">
+        <div class="" id="description-pane-content">
+            <div class="nav nav-pills me-3" id="v-pills-tabs" role="tablist">
+                <button class="nav-link active" id="v-pills-information-tab" data-bs-toggle="pill" data-bs-target="#v-pills-information" type="button" role="tab" aria-controls="v-pills-information" aria-selected="true">Information</button>
+                <button class="nav-link" id="v-pills-vanilla-tab" data-bs-toggle="pill" data-bs-target="#v-pills-vanilla" type="button" role="tab" aria-controls="v-pills-vanilla" aria-selected="false">Vanilla Server</button>
+                <button class="nav-link" id="v-pills-modded-tab" data-bs-toggle="pill" data-bs-target="#v-pills-modded" type="button" role="tab" aria-controls="v-pills-modded" aria-selected="false">Modded Server</button>
+                <button class="nav-link" id="v-pills-joining-tab" data-bs-toggle="pill" data-bs-target="#v-pills-joining" type="button" role="tab" aria-controls="v-pills-joining" aria-selected="false">Joining</button>
+            </div>
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-information" role="tabpanel" aria-labelledby="v-pills-information-tab">
+                    <h4 align="center">
+                        <strong>Welcome to our Minecraft Servers!</strong>
+                    </h4>
+                    <p>
+                        We have two minecraft servers: a Vanilla SMP and a Modded Server!
+                    </p>    
+                </div>
+                <div class="tab-pane fade" id="v-pills-vanilla" role="tabpanel" aria-labelledby="v-pills-vanilla-tab">
+                    <h4 align="center">
+                        <strong>Vanilla Server</strong>
+                    </h4>
+                    <p>
+                        Our up-to-date server features a modless, SMP experience. The server is relatively new, so there's lots to explore, discover, and build!
+                    </p>
+                </div>
+                <div class="tab-pane fade" id="v-pills-modded" role="tabpanel" aria-labelledby="v-pills-modded-tab">
+                    <h4 align="center">
+                        <strong>Modded Server</strong>
+                    </h4>
+                    <p>
+                        Our 1.16.5 modded server features a modded SMP experience. 
+                    </p>
+                </div>
+                <div class="tab-pane fade" id="v-pills-joining" role="tabpanel" aria-labelledby="v-pills-joining-tab">
+                    <h4 align="center">
+                        <strong>Want to join in on the fun?</strong>
+                    </h4>
+                    <p>
+                        Visit us on <a href="<server_link>">Discord</a>!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<?php include($_SERVER["DOCUMENT_ROOT"]."/scripts/footer.inc");
+?>
