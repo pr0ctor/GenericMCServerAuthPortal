@@ -30,7 +30,7 @@
     $webhook_username = "Some Embed UserName";
 
     // Webhook URI for the channel to post to
-    $onboarding_webhook_url = "https://discord.com/api/webhooks/1134999153974444122/6dSobN-vA1Y1aHfwkqGPXmfBBV1jhnrTWVCVz6Rywcn8RdAqM19FNptxt-JbFxnzycD9";
+    $onboarding_webhook_url = "https://discord.com/api/webhooks/1234567890123456789/6dSobN-vA1Y1aHfwkqGPXmfBBV1jhnrABCCVz6Rywcn8RdAqM19FNptxt-JbFxnzycD9";
 
     // Static list of the types of servers in the database
     $minecraft_server_types = array("Vanilla", "Modded");
